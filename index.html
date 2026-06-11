@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FG Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --surface:  #0f0f0f;
+      --border:   #1e1e1e;
+      --fg:       #e8e8e8;
+      --muted:    #666;
+      --accent:   #00e5ff;
+      --accent2:  #7b2fff;
+      --glow:     0 0 24px rgba(0,229,255,.35);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8rem 5vw;
+      background: rgba(8,8,8,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo img { height: 100px; display: block; }
+    .nav-logo svg { display: block; }
+
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      letter-spacing: .04em;
+      transition: color .2s;
+      font-family: 'Space Mono', monospace;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: .55rem 1.4rem;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-size: .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      transition: background .2s, box-shadow .2s;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: rgba(0,229,255,.08); box-shadow: var(--glow); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 140px 5vw 0;
+      position: relative;
+    }
+
+    /* grid background */
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      color: var(--accent);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-eyebrow span { opacity: .4; margin: 0 .5rem; }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      max-width: 16ch;
+      position: relative; z-index: 1;
+    }
+
+    h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      margin-top: 1.8rem;
+      max-width: 46ch;
+      color: var(--muted);
+      font-size: 1.05rem;
+      position: relative; z-index: 1;
+    }
+
+    .hero-actions {
+      margin-top: 2.4rem;
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      padding: .75rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: .95rem;
+      transition: box-shadow .2s, transform .15s;
+    }
+    .btn-primary:hover { box-shadow: var(--glow); transform: translateY(-1px); }
+
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: .75rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: .95rem;
+      transition: border-color .2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── SERVICES ── */
+    #services {
+      padding: 7rem 5vw;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: .8rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 3.5rem;
+      max-width: 22ch;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .service-card {
+      background: var(--surface);
+      padding: 2.4rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: background .2s;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s ease;
+    }
+
+    .service-card:hover { background: #111; }
+    .service-card:hover::before { transform: scaleX(1); }
+
+    .service-icon {
+      width: 42px; height: 42px;
+      margin-bottom: 1.4rem;
+      color: var(--accent);
+    }
+
+    .service-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: .6rem;
+    }
+
+    .service-card p {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.65;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 7rem 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6vw;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+
+    #about .about-text {}
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .stat-box {
+      background: var(--surface);
+      padding: 2rem 1.6rem;
+    }
+
+    .stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      margin-top: .4rem;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 7rem 5vw;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6vw;
+      align-items: start;
+    }
+
+    .contact-info h2 { margin-bottom: 1rem; }
+
+    .contact-info p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2.4rem;
+      max-width: 38ch;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .contact-item svg { color: var(--accent); flex-shrink: 0; }
+
+    .contact-item a {
+      color: var(--fg);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: .9rem;
+      transition: color .2s;
+    }
+    .contact-item a:hover { color: var(--accent); }
+
+    /* Contact form */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-field { display: flex; flex-direction: column; gap: .4rem; }
+
+    .form-field label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .form-field input,
+    .form-field textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: .8rem 1rem;
+      border-radius: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      resize: vertical;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.08);
+    }
+
+    .form-field textarea { min-height: 120px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer img { height: 160px; opacity: .7; }
+
+    footer p {
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 5vw; }
+      .nav-links { display: none; }
+      #about, #contact { grid-template-columns: 1fr; }
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">
+    <svg width="160" height="52" viewBox="0 0 160 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- FG big letters -->
+      <text x="0" y="40" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="44" fill="white" letter-spacing="-1">FG</text>
+      <!-- DIGITAL small -->
+      <text x="2" y="52" font-family="'Space Mono', monospace" font-weight="400" font-size="10" fill="#00e5ff" letter-spacing="4">DIGITAL</text>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Hizmetler</a></li>
+    <li><a href="#about">Hakkında</a></li>
+    <li><a href="#contact">İletişim</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">İletişime Geç</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-eyebrow">FG Digital <span>—</span> Dijital Çözümler</p>
+  <h1>Dijital dünyada <em>her yerde</em> seninle.</h1>
+  <p class="hero-sub">Uygulama geliştirme, web tasarımı, VPN ve bulut sunucu hizmetleriyle işini bir üst seviyeye taşıyoruz.</p>
+  <div class="hero-actions">
+    <a href="#services" class="btn-primary">Hizmetleri Keşfet</a>
+    <a href="#contact" class="btn-ghost">Teklif Al</a>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <p class="section-label reveal">// hizmetler</p>
+  <h2 class="section-title reveal">Ne yapabiliriz?</h2>
+
+  <div class="services-grid">
+    <!-- Uygulama Geliştirme -->
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="m8 21 4-4 4 4"/><path d="M9 8l-2 2 2 2"/><path d="m15 8 2 2-2 2"/>
+      </svg>
+      <h3>Uygulama Geliştirme</h3>
+      <p>Mobil ve masaüstü platformlar için özel yazılım çözümleri. İhtiyacınıza göre sıfırdan geliştirme ya da mevcut sistemi büyütme.</p>
+    </div>
+
+    <!-- Web Tasarımı -->
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/>
+      </svg>
+      <h3>Web Sitesi Tasarımı</h3>
+      <p>Hızlı, modern ve dönüşüm odaklı web siteleri. Kurumsal kimliğinizi yansıtan, her ekranda mükemmel görünen tasarımlar.</p>
+    </div>
+
+    <!-- VPN -->
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <h3>VPN Hizmetleri</h3>
+      <p>Kurumsal ve bireysel kullanım için güvenli, hızlı ve güvenilir VPN altyapısı. Verileriniz her zaman şifreli ve güvende.</p>
+    </div>
+
+    <!-- Bulut -->
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+      </svg>
+      <h3>Bulut Sunucu</h3>
+      <p>Ölçeklenebilir cloud server çözümleri. Yüksek erişilebilirlik, otomatik yedekleme ve 7/24 izleme ile kesintisiz hizmet.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <p class="section-label">// hakkında</p>
+    <h2 class="section-title">Dijital dünya bizim oyun sahamız.</h2>
+    <p style="color:var(--muted); font-size:1rem; max-width:40ch; line-height:1.8;">
+      FG Digital olarak yazılımdan güvenliğe, bulut altyapısından web tasarımına kadar uçtan uca dijital çözümler üretiyoruz. Küçük işletmelerden büyük kurumlara, her projeye aynı özenle yaklaşıyoruz.
+    </p>
+  </div>
+
+  <div class="about-stats reveal">
+    <div class="stat-box">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">Tamamlanan Proje</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Hizmet Alanı</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">7/24</div>
+      <div class="stat-label">Teknik Destek</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">%100</div>
+      <div class="stat-label">Müşteri Odaklı</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-info reveal">
+    <p class="section-label">// iletişim</p>
+    <h2 class="section-title">Projenizi konuşalım.</h2>
+    <p>Aklınızdaki fikir ne olursa olsun, birlikte hayata geçirebiliriz. Hemen yazın.</p>
+
+    <div class="contact-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+      </svg>
+      <a href="mailto:firatgokmen220@gmail.com">firatgokmen220@gmail.com</a>
+    </div>
+
+    <div class="contact-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.08 11.93a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 9 9l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+      <a href="tel:05521773157">0552 177 3157</a>
+    </div>
+  </div>
+
+  <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+    <div class="form-field">
+      <label for="name">Ad Soyad</label>
+      <input type="text" id="name" placeholder="Adınız" required />
+    </div>
+    <div class="form-field">
+      <label for="email">E-posta</label>
+      <input type="email" id="email" placeholder="ornek@mail.com" required />
+    </div>
+    <div class="form-field">
+      <label for="service">İlgilendiğiniz Hizmet</label>
+      <input type="text" id="service" placeholder="Uygulama, web, VPN, bulut..." />
+    </div>
+    <div class="form-field">
+      <label for="msg">Mesajınız</label>
+      <textarea id="msg" placeholder="Projeniz hakkında kısaca anlatın..." required></textarea>
+    </div>
+    <button type="submit" class="btn-primary" style="align-self:flex-start; border:none; cursor:pointer;">
+      Mesaj Gönder
+    </button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <svg width="100" height="34" viewBox="0 0 100 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <text x="0" y="26" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="28" fill="white" opacity="0.5" letter-spacing="-1">FG</text>
+    <text x="1" y="34" font-family="'Space Mono', monospace" font-size="7" fill="#00e5ff" opacity="0.5" letter-spacing="3">DIGITAL</text>
+  </svg>
+  <p>© 2025 FG Digital — Tüm hakları saklıdır.</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = '✓ Gönderildi!';
+    btn.style.background = '#00e5ff';
+    btn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      btn.textContent = 'Mesaj Gönder';
+      btn.style.background = '';
+      btn.style.pointerEvents = '';
+      e.target.reset();
+    }, 3000);
+  }
+</script>
+
+</body>
+</html>
